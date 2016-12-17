@@ -4,6 +4,7 @@ import com.az.ww.sqlUtil.OrderObject;
 import com.az.ww.sqlUtil.QueryObject;
 import com.az.ww.sqlUtil.SqlParam;
 import com.az.ww.tools.DBConnPool;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,434 +17,436 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 /**
- * ²éÑ¯¹¤¾ßÀà
- * @author yuandl
+ * ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
  *
+ * @author yuandl
  */
 public class DBDAO {
-	/**
-	 * ²åÈëÊý¾Ý
-	 * @param valueMap Òª²åÈëµÄÖµµÄMap<String, Object>
-	 * @param tableName Òª²åÈëµÄ±íÃû
-	 * @throws SQLException SQLException²åÈëÊ§°Ü
-	 */
-	public static int insert(Map<String, Object> valueMap, String tableName) throws SQLException {
-		int affectedCount=-1;
-		Connection conn = null;
-		PreparedStatement st = null;
-		try {
-			/**»ñÈ¡Êý¾Ý¿âÁ¬½Ó³Ø¶ÔÏó**/
-			conn = DBConnPool.getInstance().getConnection();
-			/**ÉèÖÃÊý¾Ý¿â²Ù×÷²»×Ô¶¯Ìá½»£¬ÒÔ±ãÓÚÔÚ³öÏÖÒì³£Ê±ÄÜ¹»×Ô¶¯»Ø¹ö**/
-			conn.setAutoCommit(false);
-			
-			/**Æ´sqlÓï¾ä**/
-			StringBuffer sbSql = new StringBuffer();
-						sbSql.append("insert into ");
-			sbSql.append(tableName);
-			sbSql.append("(");
-			int i = 0;
-			String s1 = null;
-			/**Æ´Òª²åÈëµÄ×Ö¶Î£¬¾ÍÊÇmapÖÐµÄkey**/
-			Set<String> key = valueMap.keySet();
-			for (Iterator<String> it = key.iterator(); it.hasNext();) {
-				String s = (String) it.next();
-				if (i == 0)
-					s1 = s;
-				else {
-					s1 = s1 + "," + s;
-				}
-				if (i == valueMap.size() - 1) {
-					sbSql.append(s);
-				} else {
-					sbSql.append(s);
-					sbSql.append(",");
-				}
-				i++;
-			}
+    /**
+     * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+     *
+     * @param valueMap  Òªï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½Map<String, Object>
+     * @param tableName Òªï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½
+     * @throws SQLException SQLExceptionï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½
+     */
+    public static int insert(Map<String, Object> valueMap, String tableName) throws SQLException {
+        int affectedCount = -1;
+        Connection conn = null;
+        PreparedStatement st = null;
+        try {
+            /**ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½Ó³Ø¶ï¿½ï¿½ï¿½**/
+            conn = DBConnPool.getInstance().getConnection();
+            /**ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½á½»ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½Ú³ï¿½ï¿½ï¿½ï¿½ì³£Ê±ï¿½Ü¹ï¿½ï¿½Ô¶ï¿½ï¿½Ø¹ï¿½**/
+            conn.setAutoCommit(false);
 
-			sbSql.append(") values(");
+            /**Æ´sqlï¿½ï¿½ï¿½**/
+            StringBuffer sbSql = new StringBuffer();
+            sbSql.append("insert into ");
+            sbSql.append(tableName);
+            sbSql.append("(");
+            int i = 0;
+            String s1 = null;
+            /**Æ´Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶Î£ï¿½ï¿½ï¿½ï¿½ï¿½mapï¿½Ðµï¿½key**/
+            Set<String> key = valueMap.keySet();
+            for (Iterator<String> it = key.iterator(); it.hasNext(); ) {
+                String s = (String) it.next();
+                if (i == 0)
+                    s1 = s;
+                else {
+                    s1 = s1 + "," + s;
+                }
+                if (i == valueMap.size() - 1) {
+                    sbSql.append(s);
+                } else {
+                    sbSql.append(s);
+                    sbSql.append(",");
+                }
+                i++;
+            }
 
-			/**Æ´Òª²åÈëµÄ×Ö¶ÎµÄÖµ£¬ÏÈÓÃ£¿´úÌæ**/
-			for (int j = 0; j < i; j++) {
-				if (j == 0)
-					sbSql.append("?");
-				else {
-					sbSql.append(",?");
-				}
-			}
+            sbSql.append(") values(");
 
-			sbSql.append(")");
-			
-			st = conn.prepareStatement(sbSql.toString());
-			String[] s1Array = s1.split(",");
-			for (int j = 0; j < i; j++) {
-				st.setObject(j + 1, valueMap.get(s1Array[j]));
-			}
-			affectedCount=st.executeUpdate();
-			conn.commit();
-			
-			
-		} catch (Exception e) {
-			System.out.println(e);
-			try {
-				conn.rollback();
-			} catch (Exception localException1) {
-			}
-			if (st != null)
-				try {
-					st.close();
-				} catch (SQLException localSQLException) {
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException localSQLException1) {
-				}
-		} finally {
-			if (st != null)
-				try {
-					st.close();
-				} catch (SQLException localSQLException2) {
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException localSQLException3) {
-				}
-		}
-		return affectedCount;
-	}
+            /**Æ´Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶Îµï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½**/
+            for (int j = 0; j < i; j++) {
+                if (j == 0)
+                    sbSql.append("?");
+                else {
+                    sbSql.append(",?");
+                }
+            }
 
-	public static int update(Map<String, Object> valueMap, String tableName, Map<String, Object> conditionMap)
-			throws SQLException {
+            sbSql.append(")");
 
-		int affectedCount=-1;
-		Connection conn = null;
-		Statement statement = null;
-		try {
-			conn = DBConnPool.getInstance().getConnection();
-			conn.setAutoCommit(false);
+            st = conn.prepareStatement(sbSql.toString());
+            String[] s1Array = s1.split(",");
+            for (int j = 0; j < i; j++) {
+                st.setObject(j + 1, valueMap.get(s1Array[j]));
+            }
+            affectedCount = st.executeUpdate();
+            conn.commit();
 
-			statement = conn.createStatement();
 
-			StringBuffer sbSql = new StringBuffer();
-			sbSql.append("update ");
-			sbSql.append(tableName);
-			sbSql.append(" set ");
+        } catch (Exception e) {
+            System.out.println(e);
+            try {
+                conn.rollback();
+            } catch (Exception localException1) {
+            }
+            if (st != null)
+                try {
+                    st.close();
+                } catch (SQLException localSQLException) {
+                }
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException localSQLException1) {
+                }
+        } finally {
+            if (st != null)
+                try {
+                    st.close();
+                } catch (SQLException localSQLException2) {
+                }
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException localSQLException3) {
+                }
+        }
+        return affectedCount;
+    }
 
-			Set<String> key = valueMap.keySet();
-			int i = 0;
-			for (Iterator<String> it = key.iterator(); it.hasNext();) {
-				String s = (String) it.next();
-				sbSql.append(s);
-				sbSql.append("='");
+    public static int update(Map<String, Object> valueMap, String tableName, Map<String, Object> conditionMap)
+            throws SQLException {
 
-				sbSql.append(valueMap.get(s));
-				if (i == valueMap.size() - 1)
-					sbSql.append("'");
-				else {
-					sbSql.append("',");
-				}
-				i++;
-			}
+        int affectedCount = -1;
+        Connection conn = null;
+        Statement statement = null;
+        try {
+            conn = DBConnPool.getInstance().getConnection();
+            conn.setAutoCommit(false);
 
-			sbSql.append(" where ");
-			int j = 0;
-			Set<String> keyC = conditionMap.keySet();
-			for (Iterator<String> itC = keyC.iterator(); itC.hasNext();) {
-				String sC = (String) itC.next();
-				sbSql.append(sC);
-				sbSql.append("='");
-				sbSql.append(conditionMap.get(sC));
-				sbSql.append("'");
-				if (j != conditionMap.size() - 1) {
-					sbSql.append(" and ");
-				}
-				j++;
-			}
+            statement = conn.createStatement();
 
-			System.out.println(sbSql.toString());
-			affectedCount=	statement.executeUpdate(sbSql.toString());
-			conn.commit();
-		} catch (Exception e) {
-			System.out.println(e);
-			try {
-				conn.rollback();
-			} catch (Exception localException1) {
-			}
-			if (statement != null)
-				try {
-					statement.close();
-				} catch (SQLException localSQLException) {
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException localSQLException1) {
-				}
-		} finally {
-			if (statement != null)
-				try {
-					statement.close();
-				} catch (SQLException localSQLException2) {
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException localSQLException3) {
-				}
-		}
-		return affectedCount;
-	}
+            StringBuffer sbSql = new StringBuffer();
+            sbSql.append("update ");
+            sbSql.append(tableName);
+            sbSql.append(" set ");
 
-	public static int delete(String sqlDel) {
-		int affectedCount=-1;
-		Connection conn = null;
-		Statement statement = null;
-		try {
-			conn = DBConnPool.getInstance().getConnection();
-			conn.setAutoCommit(false);
-			statement = conn.createStatement();
-			affectedCount=statement.executeUpdate(sqlDel);
-			conn.commit();
-		} catch (Exception e) {
-			try {
-				conn.rollback();
-			} catch (Exception localException1) {
-			}
-			if (statement != null)
-				try {
-					statement.close();
-				} catch (SQLException localSQLException) {
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException localSQLException1) {
-				}
-		} finally {
-			if (statement != null)
-				try {
-					statement.close();
-				} catch (SQLException localSQLException2) {
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException localSQLException3) {
-				}
-		}
-		return affectedCount;
-	}
+            Set<String> key = valueMap.keySet();
+            int i = 0;
+            for (Iterator<String> it = key.iterator(); it.hasNext(); ) {
+                String s = (String) it.next();
+                sbSql.append(s);
+                sbSql.append("='");
 
-	public static int delete(HashMap<String, String> conditionMap, String tableName) throws SQLException {
-		int affectedCount=-1;
-		Connection conn = null;
-		Statement statement = null;
-		try {
-			conn = DBConnPool.getInstance().getConnection();
-			conn.setAutoCommit(false);
-			statement = conn.createStatement();
+                sbSql.append(valueMap.get(s));
+                if (i == valueMap.size() - 1)
+                    sbSql.append("'");
+                else {
+                    sbSql.append("',");
+                }
+                i++;
+            }
 
-			StringBuffer sbSql = new StringBuffer();
-			sbSql.append("delete from ");
-			sbSql.append(tableName);
-			sbSql.append(" where ");
-			int j = 0;
-			Set<String> keyC = conditionMap.keySet();
-			for (Iterator<String> itC = keyC.iterator(); itC.hasNext();) {
-				String sC = (String) itC.next();
-				sbSql.append(sC);
-				sbSql.append("='");
-				sbSql.append((String) conditionMap.get(sC));
-				sbSql.append("'");
-				if (j != conditionMap.size() - 1) {
-					sbSql.append(" and ");
-				}
-				j++;
-			}
+            sbSql.append(" where ");
+            int j = 0;
+            Set<String> keyC = conditionMap.keySet();
+            for (Iterator<String> itC = keyC.iterator(); itC.hasNext(); ) {
+                String sC = (String) itC.next();
+                sbSql.append(sC);
+                sbSql.append("='");
+                sbSql.append(conditionMap.get(sC));
+                sbSql.append("'");
+                if (j != conditionMap.size() - 1) {
+                    sbSql.append(" and ");
+                }
+                j++;
+            }
 
-			affectedCount=statement.executeUpdate(sbSql.toString());
-			conn.commit();
-		} catch (Exception e) {
-			try {
-				conn.rollback();
-			} catch (Exception localException1) {
-			}
-			if (statement != null)
-				try {
-					statement.close();
-				} catch (SQLException localSQLException) {
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException localSQLException1) {
-				}
-		} finally {
-			if (statement != null)
-				try {
-					statement.close();
-				} catch (SQLException localSQLException2) {
-				}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException localSQLException3) {
-				}
-		}
-		return affectedCount;
-	}
+            System.out.println(sbSql.toString());
+            affectedCount = statement.executeUpdate(sbSql.toString());
+            conn.commit();
+        } catch (Exception e) {
+            System.out.println(e);
+            try {
+                conn.rollback();
+            } catch (Exception localException1) {
+            }
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException localSQLException) {
+                }
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException localSQLException1) {
+                }
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException localSQLException2) {
+                }
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException localSQLException3) {
+                }
+        }
+        return affectedCount;
+    }
 
-	public static List<Map<String, Object>> query(String sql) throws Exception {
-		System.out.println(sql);
-		Connection conn = null;
-		ResultSetMetaData rsmd = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		List<Map<String, Object>> valueList = null;
-		try {
-			conn = DBConnPool.getInstance().getConnection();
-			conn.setAutoCommit(false);
+    public static int delete(String sqlDel) {
+        int affectedCount = -1;
+        Connection conn = null;
+        Statement statement = null;
+        try {
+            conn = DBConnPool.getInstance().getConnection();
+            conn.setAutoCommit(false);
+            statement = conn.createStatement();
+            affectedCount = statement.executeUpdate(sqlDel);
+            conn.commit();
+        } catch (Exception e) {
+            try {
+                conn.rollback();
+            } catch (Exception localException1) {
+            }
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException localSQLException) {
+                }
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException localSQLException1) {
+                }
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException localSQLException2) {
+                }
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException localSQLException3) {
+                }
+        }
+        return affectedCount;
+    }
 
-			ps = conn.prepareStatement(sql);
-			rs = ps.executeQuery();
-			rsmd = rs.getMetaData();
+    public static int delete(HashMap<String, String> conditionMap, String tableName) throws SQLException {
+        int affectedCount = -1;
+        Connection conn = null;
+        Statement statement = null;
+        try {
+            conn = DBConnPool.getInstance().getConnection();
+            conn.setAutoCommit(false);
+            statement = conn.createStatement();
 
-			valueList = new ArrayList<Map<String, Object>>();
-			while (rs.next()) {
-				Map<String, Object> valueMap = new HashMap<String, Object>();
+            StringBuffer sbSql = new StringBuffer();
+            sbSql.append("delete from ");
+            sbSql.append(tableName);
+            sbSql.append(" where ");
+            int j = 0;
+            Set<String> keyC = conditionMap.keySet();
+            for (Iterator<String> itC = keyC.iterator(); itC.hasNext(); ) {
+                String sC = (String) itC.next();
+                sbSql.append(sC);
+                sbSql.append("='");
+                sbSql.append((String) conditionMap.get(sC));
+                sbSql.append("'");
+                if (j != conditionMap.size() - 1) {
+                    sbSql.append(" and ");
+                }
+                j++;
+            }
 
-				if (rsmd != null) {
-					int count = rsmd.getColumnCount();
-					for (int i = 1; i <= count; i++) {
-						valueMap.put(rsmd.getColumnName(i).toLowerCase(), rs.getString(rsmd.getColumnName(i)));
-					}
-				}
-				valueList.add(valueMap);
-			}
-			conn.commit();
-		} catch (Exception e) {
-			System.out.println(e);
+            affectedCount = statement.executeUpdate(sbSql.toString());
+            conn.commit();
+        } catch (Exception e) {
+            try {
+                conn.rollback();
+            } catch (Exception localException1) {
+            }
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException localSQLException) {
+                }
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException localSQLException1) {
+                }
+        } finally {
+            if (statement != null)
+                try {
+                    statement.close();
+                } catch (SQLException localSQLException2) {
+                }
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException localSQLException3) {
+                }
+        }
+        return affectedCount;
+    }
 
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e2) {
-					e2.printStackTrace();
-				}
-			}
-			if (conn != null)
-				try {
-					conn.close();
-				} catch (SQLException e3) {
-					e3.printStackTrace();
-				}
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (ps != null) {
-				try {
-					ps.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+    public static List<Map<String, Object>> query(String sql) throws Exception {
+        System.out.println(sql);
+        Connection conn = null;
+        ResultSetMetaData rsmd = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<Map<String, Object>> valueList = null;
+        try {
+            conn = DBConnPool.getInstance().getConnection();
+            conn.setAutoCommit(false);
 
-		return valueList;
-	}
+            ps = conn.prepareStatement(sql);
+            rs = ps.executeQuery();
+            rsmd = rs.getMetaData();
 
-	public static List<Map<String, Object>> query(String tableName, SqlParam sp) throws Exception {
-		String sql = getSql(tableName, sp);
-		System.out.println("sql:" + sql);
-		return query(sql);
-	}
+            valueList = new ArrayList<Map<String, Object>>();
+            while (rs.next()) {
+                Map<String, Object> valueMap = new HashMap<String, Object>();
 
-	private static String getSql(String tableName, SqlParam sp) {
-		StringBuffer sql = new StringBuffer();
-		if ((sp.getSearchField() == null) || ("".equals(sp.getSearchField()))) {
-			sql.append("select * from ");
-			sql.append(tableName);
-		} else {
-			sql.append("select ");
-			sql.append(sp.getSearchField());
-			sql.append(" from ");
-			sql.append(tableName);
-		}
-		QueryObject obj;
-		if ((sp.getQueryList() != null) && (sp.getQueryList().size() > 0)) {
-			int kk = 0;
-			for (Iterator localIterator = sp.getQueryList().iterator(); localIterator.hasNext();) {
-				obj = (QueryObject) localIterator.next();
-				if (QueryObject.isValidate(obj)) {
-					if (kk == 0)
-						sql.append(" where ");
-					else {
-						sql.append(obj.getPrepend());
-					}
-					sql.append(obj.getField());
-					sql.append(" ");
-					sql.append(obj.getCondition());
-					sql.append(" ");
-					if ("like".equals(obj.getCondition().toLowerCase())) {
-						sql.append(" '");
-						sql.append("%");
-						sql.append(obj.getValue());
-						sql.append("%");
-						sql.append("'");
-					} else if ("in".equals(obj.getCondition().toLowerCase())) {
-						sql.append("(");
-						sql.append(obj.getValue());
-						sql.append(")");
-					} else if ("not in".equals(obj.getCondition().toLowerCase())) {
-						sql.append("(");
-						sql.append(obj.getValue());
-						sql.append(")");
-					} else if (!"is not null".equals(obj.getCondition().toLowerCase())) {
-						if (!"is null".equals(obj.getCondition().toLowerCase())) {
-							sql.append(" '");
-							sql.append(obj.getValue());
-							sql.append("'");
-						}
-					}
-				}
-			}
-			kk++;
-		}
-		if ((sp.getOrderList() != null) && (sp.getOrderList().size() > 0)) {
-			sql.append(" order by ");
-			for (OrderObject obj2 : sp.getOrderList()) {
-				if (OrderObject.isValidate(obj2)) {
-					sql.append(obj2.getField());
-					sql.append(" ");
-					sql.append(obj2.getType());
-					sql.append(",");
-				}
-			}
-			sql = new StringBuffer(sql.substring(0, sql.length() - 1));
-		}
-		return sql.toString();
-	}
+                if (rsmd != null) {
+                    int count = rsmd.getColumnCount();
+                    for (int i = 1; i <= count; i++) {
+                        valueMap.put(rsmd.getColumnName(i).toLowerCase(), rs.getString(rsmd.getColumnName(i)));
+                    }
+                }
+                valueList.add(valueMap);
+            }
+            conn.commit();
+        } catch (Exception e) {
+            System.out.println(e);
+
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
+            }
+            if (conn != null)
+                try {
+                    conn.close();
+                } catch (SQLException e3) {
+                    e3.printStackTrace();
+                }
+        } finally {
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        return valueList;
+    }
+
+    public static List<Map<String, Object>> query(String tableName, SqlParam sp) throws Exception {
+        String sql = getSql(tableName, sp);
+        System.out.println("sql:" + sql);
+        return query(sql);
+    }
+
+    private static String getSql(String tableName, SqlParam sp) {
+        StringBuffer sql = new StringBuffer();
+        if ((sp.getSearchField() == null) || ("".equals(sp.getSearchField()))) {
+            sql.append("select * from ");
+            sql.append(tableName);
+        } else {
+            sql.append("select ");
+            sql.append(sp.getSearchField());
+            sql.append(" from ");
+            sql.append(tableName);
+        }
+        QueryObject obj;
+        if ((sp.getQueryList() != null) && (sp.getQueryList().size() > 0)) {
+            int kk = 0;
+            for (Iterator localIterator = sp.getQueryList().iterator(); localIterator.hasNext(); ) {
+                obj = (QueryObject) localIterator.next();
+                if (QueryObject.isValidate(obj)) {
+                    if (kk == 0)
+                        sql.append(" where ");
+                    else {
+                        sql.append(obj.getPrepend());
+                    }
+                    sql.append(obj.getField());
+                    sql.append(" ");
+                    sql.append(obj.getCondition());
+                    sql.append(" ");
+                    if ("like".equals(obj.getCondition().toLowerCase())) {
+                        sql.append(" '");
+                        sql.append("%");
+                        sql.append(obj.getValue());
+                        sql.append("%");
+                        sql.append("'");
+                    } else if ("in".equals(obj.getCondition().toLowerCase())) {
+                        sql.append("(");
+                        sql.append(obj.getValue());
+                        sql.append(")");
+                    } else if ("not in".equals(obj.getCondition().toLowerCase())) {
+                        sql.append("(");
+                        sql.append(obj.getValue());
+                        sql.append(")");
+                    } else if (!"is not null".equals(obj.getCondition().toLowerCase())) {
+                        if (!"is null".equals(obj.getCondition().toLowerCase())) {
+                            sql.append(" '");
+                            sql.append(obj.getValue());
+                            sql.append("'");
+                        }
+                    }
+                }
+            }
+            kk++;
+        }
+        if ((sp.getOrderList() != null) && (sp.getOrderList().size() > 0)) {
+            sql.append(" order by ");
+            for (OrderObject obj2 : sp.getOrderList()) {
+                if (OrderObject.isValidate(obj2)) {
+                    sql.append(obj2.getField());
+                    sql.append(" ");
+                    sql.append(obj2.getType());
+                    sql.append(",");
+                }
+            }
+            sql = new StringBuffer(sql.substring(0, sql.length() - 1));
+        }
+        return sql.toString();
+    }
 }
